@@ -33,6 +33,7 @@ const cardSchema = new Schema({
 });
 cardSchema.pre('save', async function (next){
 	try{
+        this.updatedAt = Date.now(); 
 		const hash = bcrypt.hashSync(this.pin, 8);
         this.pin = hash;
 	}catch(err){

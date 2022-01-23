@@ -21,7 +21,7 @@ const TransactionSchema = new Schema({
     },
     type: {
         type: String,
-        enum: ['Withdraw', 'Deposit', 'Transfer'],
+        enum: ['withdraw', 'deposit', 'transfer'],
         required: true
     },
     fee: {
@@ -42,6 +42,10 @@ const TransactionSchema = new Schema({
 
 TransactionSchema.methods.getStatus = () => {
     if (this.statusCode == '000') return 'Canceled by Client';
+}
+
+TransactionSchema.methods.calFee = (amount) => {
+    return 0.05*amount;
 }
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

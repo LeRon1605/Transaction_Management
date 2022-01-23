@@ -7,15 +7,36 @@ class TransactionController{
     }
 
     async makeTransaction(req, res, next){
-        const { type, amount, srcAccount, destAccount, user } = req.body;
-        const card = await Card.findById(srcAccount);
-        if (card != null){
-            if (type.toLowerCase() === 'withdraw'){
-                if (card.balance >= amount){
-                    
+        try{
+            const { amount, srcAccount, destAccount, user } = req.body;
+            const { type } = req.query;
+            //if (!['withdraw', 'deposit', 'transfer'].find(type)) return res.json({ message: 'Invalid type' })
+            const card = await Card.findById(srcAccount);
+            if (card != null){
+                const transaction = new Transaction({
+                    type: type.toLowerCase(),
+                    amount,
+                    srcAccount,
+                    destAccount,
+                    user,
+                    fee: 0
+                })
+                if (type.toLowerCase() === 'withdraw'){
+                    if (amount + fee <= card.balance){
+                        const fee = transaction.calFee(amount);
+                        card.blance -= amount + fee;
+                        transaction.status = '200';
+                        transaction.fee = fee;
+                        await card.save();
+                    }else{
+                        transaction.status = '000';
+                    }
+                    await transaction.save();
                 }
-                console.log(transaction);
+                return res.json(transaction);
             }
+        }catch(err){
+            next(err);
         }
     }
 }
