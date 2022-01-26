@@ -36,7 +36,8 @@ const TransactionSchema = new Schema({
     },
     statusCode: {
         type: String,
-        enum: ['000', '100', '200', '300']
+        enum: ['000', '100', '200', '300'],
+        default: '000'
     }
 });
 

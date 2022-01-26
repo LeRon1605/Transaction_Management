@@ -1,16 +1,18 @@
 const Transaction = require('../DAO/Transaction');
 const Card = require('../DAO/Card');
 class TransactionController{
+    // [GET] /
     async getAll(req, res, next){
         const transactions = await Transaction.find({});
         return res.status(200).json(transactions);
     }
 
+    // [POST] /
     async makeTransaction(req, res, next){
         try{
-            const { amount, srcAccount, destAccount, user } = req.body;
+            const { amount, srcAccount, destAccount } = req.body;
             const { type } = req.query;
-            //if (!['withdraw', 'deposit', 'transfer'].find(type)) return res.json({ message: 'Invalid type' })
+            if (type.toLowerCase() != 'withdraw' && type.toLowerCase() != 'deposit' && type.toLowerCase() != 'transfer') return res.json({ message: 'Invalid type' })
             const card = await Card.findById(srcAccount);
             if (card != null){
                 const transaction = new Transaction({
@@ -18,26 +20,58 @@ class TransactionController{
                     amount,
                     srcAccount,
                     destAccount,
-                    user,
+                    user: card.owner,
                     fee: 0
                 })
                 if (type.toLowerCase() === 'withdraw'){
-                    if (amount + fee <= card.balance){
+                    if (amount > 50000){
                         const fee = transaction.calFee(amount);
-                        card.blance -= amount + fee;
-                        transaction.status = '200';
+                        if (amount + fee <= card.balance){
+                            card.balance -= (amount + fee);
+                            transaction.statusCode = '200';
+                            transaction.fee = fee;
+                            await card.save();
+                        }else{
+                            transaction.statusCode = '000';
+                        }
+                    }else transaction.statusCode = '100'
+                }else if (type.toLowerCase() == 'deposit'){
+                    if (amount > 50000){
+                        const fee = transaction.calFee(amount);
+                        card.balance += amount - fee;
+                        transaction.statusCode = '200';
                         transaction.fee = fee;
                         await card.save();
-                    }else{
-                        transaction.status = '000';
-                    }
-                    await transaction.save();
+                    }else transaction.statusCode = '100';
+                }else if (type.toLowerCase() == 'transfer'){
+                    const destCard = await Card.findById(destAccount);
+                    if (destCard){
+                        if (amount > 50000){
+                            const fee = transaction.calFee(amount);
+                            if (card.balance >= amount + fee){
+                                card.balance -= amount + fee;
+                                destCard.balance += amount;
+                                transaction.fee = fee;
+                                transaction.statusCode = '200';
+                                await card.save();
+                                await destCard.save();
+                            }else transaction.statusCode = '000';
+                        }else transaction.statusCode = '100';
+                    }else return res.json({ message: 'Destination card not found' });
                 }
+                await transaction.save();
                 return res.json(transaction);
-            }
+            }else return res.json({ message: 'Source Card not found' });
         }catch(err){
             next(err);
         }
     }
+
+    async deleteAll(req, res, next){
+        await Transaction.remove({});
+        return res.json({ message: 'Deleted'});
+    }
+
+
 }
 module.exports = new TransactionController();
