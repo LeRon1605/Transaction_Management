@@ -1,5 +1,5 @@
-const Card = require('../DAO/Card');
-const User = require('../DAO/User');
+const Card = require('../db/Card');
+const User = require('../db/User');
 const bcrypt = require('bcryptjs');
 class CardController
 {   

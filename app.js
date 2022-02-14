@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoClient = require('mongoose');
-const db = require('./DAO/connect');
+const db = require('./db/connect');
 const routes = require('./Route/index');
 
 db.connect();

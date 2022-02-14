@@ -5,9 +5,11 @@ const userController = require('../Controller/User');
 const passport = require('passport');
 const passportConfig = require('../Middleware/passport');
 const authorization = require('../Middleware/authorization');
+
+const { schemas, validator } = require('../Middleware/validator');
 route
     .get('/', userController.getAllUsers)
-    .post('/', userController.createUser)
+    .post('/', validator(schemas.userSchema), userController.createUser)
     .delete('/', userController.removeAll)
 
 route 

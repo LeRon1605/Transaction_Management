@@ -1,5 +1,5 @@
-const User = require('../DAO/User');
-const Card = require('../DAO/Card');
+const User = require('../db/User');
+const Card = require('../db/Card');
 const jwt = require('jsonwebtoken');
 class UserController
 { 

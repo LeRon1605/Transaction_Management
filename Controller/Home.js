@@ -1,4 +1,4 @@
-const User = require('../DAO/User');
+const User = require('../db/User');
 const jwt = require('jsonwebtoken');
 const encodedToken = (userID) => {
     return jwt.sign({

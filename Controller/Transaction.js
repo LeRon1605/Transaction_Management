@@ -1,5 +1,5 @@
-const Transaction = require('../DAO/Transaction');
-const Card = require('../DAO/Card');
+const Transaction = require('../db/Transaction');
+const Card = require('../db/Card');
 class TransactionController{
     // [GET] /
     async getAll(req, res, next){
