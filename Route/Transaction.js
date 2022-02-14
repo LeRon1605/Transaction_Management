@@ -6,4 +6,8 @@ route
     .get('/', transactionController.getAll)
     .post('/', transactionController.makeTransaction)
     .delete('/', transactionController.deleteAll)
+
+route
+    .get('/:id', transactionController.getTransaction)
+    .delete('/:id', transactionController.deleteTransaction)
 module.exports = route;

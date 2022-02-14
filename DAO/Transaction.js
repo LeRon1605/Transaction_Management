@@ -36,13 +36,19 @@ const TransactionSchema = new Schema({
     },
     statusCode: {
         type: String,
-        enum: ['000', '100', '200', '300'],
+        enum: ['000', '100', '200'],
         default: '000'
+    },
+    description: {
+        type: String,
+        default: ''
     }
 });
 
-TransactionSchema.methods.getStatus = () => {
-    if (this.statusCode == '000') return 'Canceled by Client';
+TransactionSchema.methods.getStatus = (statusCode) => {
+    if (statusCode == '000') return 'Balance does not enough to make this transaction';
+    else if (statusCode == '100') return 'Amount is less than 50,000';
+    else if (statusCode == '200') return 'Success';
 }
 
 TransactionSchema.methods.calFee = (amount) => {

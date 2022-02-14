@@ -29,7 +29,14 @@ const cardSchema = new Schema({
         type: Schema.Types.ObjectId,
 		ref: 'User',
         required: true
-    }
+    },
+    transaction: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Transaction',
+            default: null
+        }
+    ]
 });
 cardSchema.pre('save', async function (next){
 	try{

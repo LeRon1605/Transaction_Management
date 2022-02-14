@@ -103,6 +103,19 @@ class CardController
             next(err);
         }
     }
+
+    // [GET] /:id/transactions
+    async getTransaction(req, res, next){
+        try{
+            const card = await Card.findById(req.params.id).populate('transaction');
+            return res.status(200).json({ 
+                cardID: card._id,
+                transaction: card.transaction 
+            });
+        }catch(err){
+            next(err);
+        }
+    }
     
 }
 module.exports = new CardController();

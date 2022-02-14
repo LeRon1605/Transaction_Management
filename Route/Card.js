@@ -13,4 +13,7 @@ route
     .get('/:id', cardController.getCard)
     .put('/:id', cardController.updateCard)
     .delete('/:id', cardController.deleteCard)
+
+route
+    .get('/:id/transaction', cardController.getTransaction)
 module.exports = route;

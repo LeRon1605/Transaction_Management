@@ -59,6 +59,9 @@ class TransactionController{
                         }else transaction.statusCode = '100';
                     }else return res.json({ message: 'Destination card not found' });
                 }
+                transaction.description = transaction.getStatus(transaction.statusCode);
+                card.transaction.push(transaction._id);
+                await card.save();
                 await transaction.save();
                 return res.json(transaction);
             }else return res.json({ message: 'Source Card not found' });
@@ -67,10 +70,33 @@ class TransactionController{
         }
     }
 
+    // [DELETE] /
     async deleteAll(req, res, next){
         await Transaction.remove({});
         return res.json({ message: 'Deleted'});
     }
+
+    // [GET] /:id
+    async getTransaction(req, res, next){
+        const transaction = await Transaction.findById(req.params.id);
+        if (transaction) return res.status(200).json(transaction);
+        else return res.json({ message: 'Transaction not found' });
+    }
+
+    // [DELETE] /:id
+    async deleteTransaction(req, res, next){
+        try{
+            const transaction = await Transaction.findById(req.params.id);
+            if (transaction) {
+                await transaction.remove();
+                return res.json({ message: 'Transaction deleted successfully' });
+            }else return res.json({ message: 'Transaction not found' });
+        }catch(err){
+            next(err);
+        }
+    }
+
+
 
 
 }
