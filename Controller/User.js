@@ -1,6 +1,9 @@
 const User = require('../db/User');
 const Card = require('../db/Card');
 const jwt = require('jsonwebtoken');
+
+const bcrypt = require('bcryptjs');
+
 class UserController
 { 
     // [GET] /
@@ -22,7 +25,7 @@ class UserController
             })
             const newUser = new User({
                 username,
-                password,
+                password: bcrypt.hashSync(password, 8),
                 name,
                 gender,
                 address,

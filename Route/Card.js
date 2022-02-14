@@ -2,9 +2,10 @@ const express = require('express');
 const route = express.Router();
 const cardController = require('../Controller/Card');
 
+const { schemas, validator } = require('../Middleware/validator');
 route
     .get('/', cardController.getAll)
-    .post('/', cardController.createCard)
+    .post('/', validator(schemas.cardSchema), cardController.createCard)
     .delete('/', cardController.deleteAll)
 
 route
